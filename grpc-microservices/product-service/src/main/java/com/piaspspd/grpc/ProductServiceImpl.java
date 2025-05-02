@@ -61,6 +61,24 @@ public class ProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBas
 
     @Override
     public void addProduct(ProductOuterClass.Product request, StreamObserver<Empty> responseObserver) {
+        ProductOuterClass.Product existing = products.stream()
+                .filter(p -> p.getName().equals(request.getName()))
+                .findFirst()
+                .orElseThrow(() ->
+                        Status.NOT_FOUND
+                                .withDescription("Product '" + request.getName() + "' not found")
+                                .asRuntimeException()
+                );
+
+        if (existing != null) {
+            responseObserver.onError(
+                    Status.NOT_FOUND
+                            .withDescription("Product '" + request.getName() + "' already exists")
+                            .asRuntimeException()
+            );
+
+            return;
+        }
         products.add(request);
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
