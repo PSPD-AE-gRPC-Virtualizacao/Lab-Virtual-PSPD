@@ -10,8 +10,7 @@ public class GrpcServer {
                 .addService(new ProductServiceImpl())
                 .build();
 
-        // Nem um pouco óbvio o chatgpt aqui
-        System.out.println("🚀 Servidor gRPC iniciado na porta 50051");
+        System.out.println("Servidor gRPC iniciado na porta 50051");
         server.start();
         server.awaitTermination();
     }
