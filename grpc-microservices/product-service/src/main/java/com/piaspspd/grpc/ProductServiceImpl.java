@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBase {
 
-    private List<ProductOuterClass.Product> products = new ArrayList<>();
+    private final List<ProductOuterClass.Product> products = new ArrayList<>();
 
     private ProductOuterClass.Product findProductOrThrow(String name) {
         return products.stream()
