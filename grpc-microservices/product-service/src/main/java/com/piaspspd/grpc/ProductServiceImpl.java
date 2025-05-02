@@ -1,17 +1,68 @@
 package com.piaspspd.grpc;
 
+import com.google.protobuf.Empty;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBase {
 
-    @Override
-    public void getProduct(Product.ProductRequest request, StreamObserver<Product.ProductResponse> responseObserver) {
-        Product.ProductResponse reply = Product.ProductResponse.newBuilder()
-                .setName("Teste fezes")
-                .setPrice(999)
-                .build();
+    private List<ProductOuterClass.Product> products = new ArrayList<>();
 
-        responseObserver.onNext(reply);
+    private ProductOuterClass.Product findProductOrThrow(String name) {
+        return products.stream()
+                .filter(p -> p.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() ->
+                        Status.NOT_FOUND
+                                .withDescription("Product '" + name + "' not found")
+                                .asRuntimeException()
+                );
+    }
+
+    @Override
+    public void getProduct(ProductOuterClass.nameQuery request, StreamObserver<ProductOuterClass.Product> responseObserver) {
+        try {
+            ProductOuterClass.Product product = findProductOrThrow(request.getName());
+            responseObserver.onNext(product);
+            responseObserver.onCompleted();
+        } catch (StatusRuntimeException e) {
+            responseObserver.onError(e);
+        }
+    }
+
+    @Override
+    public void removeProduct(ProductOuterClass.nameQuery request, StreamObserver<Empty> responseObserver) {
+        try {
+            ProductOuterClass.Product product = findProductOrThrow(request.getName());
+            products.remove(product);
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (StatusRuntimeException e) {
+            responseObserver.onError(e);
+        }
+    }
+
+    @Override
+    public void updateProduct(ProductOuterClass.Product request, StreamObserver<Empty> responseObserver) {
+        try {
+            ProductOuterClass.Product oldProduct = findProductOrThrow(request.getName());
+            products.remove(oldProduct);
+            products.add(request);
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (StatusRuntimeException e) {
+            responseObserver.onError(e);
+        }
+    }
+
+    @Override
+    public void addProduct(ProductOuterClass.Product request, StreamObserver<Empty> responseObserver) {
+        products.add(request);
+        responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 }
