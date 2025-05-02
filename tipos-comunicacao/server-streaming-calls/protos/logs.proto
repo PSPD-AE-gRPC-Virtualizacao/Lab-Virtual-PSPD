@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package logs;
+
+service Logs {
+	rpc showLogs (LogRequest) returns (stream LogReply);
+}
+
+message LogRequest {
+  string nome = 1;
+}
+
+message LogReply {
+  string message = 1;
+}
