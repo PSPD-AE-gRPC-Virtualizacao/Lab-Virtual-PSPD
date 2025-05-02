@@ -29,7 +29,7 @@ public class ProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBas
     @Override
     public void getProducts(ProductOuterClass.nameQuery request, StreamObserver<ProductOuterClass.Product> responseObserver) {
        products.stream()
-               .filter(p -> p.getName().equals(request.getName()))
+               .filter(p -> p.getName().contains(request.getName()))
                .forEach(responseObserver::onNext);
        responseObserver.onCompleted();
     }
