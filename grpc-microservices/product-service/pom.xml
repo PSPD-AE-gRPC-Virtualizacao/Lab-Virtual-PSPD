@@ -67,6 +67,9 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.piaspspd.grpc.GrpcServer</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
