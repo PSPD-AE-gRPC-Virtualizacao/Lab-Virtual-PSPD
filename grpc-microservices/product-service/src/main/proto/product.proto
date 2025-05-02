@@ -4,8 +4,13 @@ import "google/protobuf/empty.proto";
 package com.piaspspd.grpc;
 
 service ProductService {
+  // Busca parcial
+  rpc GetProducts (nameQuery) returns (stream Product);
   rpc GetProduct (nameQuery) returns (Product);
+
   rpc addProduct (Product) returns (google.protobuf.Empty);
+  rpc addProducts (stream Product) returns (google.protobuf.Empty);
+
   rpc removeProduct(nameQuery) returns (google.protobuf.Empty);
   rpc updateProduct (Product) returns (google.protobuf.Empty);
 }
