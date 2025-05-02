@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package com.piaspspd.grpc;
+
+service ProductService {
+  rpc GetProduct (ProductRequest) returns (ProductResponse);
+}
+
+message ProductRequest {
+  string id = 1;
+}
+
+message ProductResponse {
+  string name = 1;
+  float price = 2;
+}
