@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package cadastro;
+
+service Cadastro {
+	rpc Cadastrar (stream CadastroRequest) returns (CadastroReply);
+}
+
+message CadastroRequest {
+  string nome = 1;
+}
+
+message CadastroReply {
+	string mensagem = 1;
+	repeated CadastroRequest request = 2;
+}
