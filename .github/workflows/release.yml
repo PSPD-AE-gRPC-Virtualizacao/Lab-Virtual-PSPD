@@ -7,7 +7,7 @@ jobs:
   build-cart-service:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -26,7 +26,7 @@ jobs:
           tar -czvf dist/cart-service-${{ github.ref_name }}.tar.gz -C grpc-microservices/cart-service .
 
       - name: Upload cart-service artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cart-service
           path: dist/cart-service-${{ github.ref_name }}.tar.gz
@@ -34,10 +34,10 @@ jobs:
   build-product-service:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -48,7 +48,7 @@ jobs:
         run: mvn clean compile assembly:single
 
       - name: Upload product-service artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: product-service
           path: grpc-microservices/product-service/target/product-service-*.jar
@@ -56,10 +56,10 @@ jobs:
   build-web-server:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '16'
 
@@ -73,7 +73,7 @@ jobs:
           tar -czvf dist/web-server-${{ github.ref_name }}.tar.gz -C grpc-microservices/web-server .
 
       - name: Upload web-server artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: web-server
           path: dist/web-server-${{ github.ref_name }}.tar.gz
@@ -82,7 +82,7 @@ jobs:
     needs: [build-cart-service, build-product-service, build-web-server]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
 
       - name: List downloaded artifacts
         run: ls -R
