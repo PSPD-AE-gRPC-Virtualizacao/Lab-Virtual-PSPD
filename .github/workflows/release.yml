@@ -1,5 +1,3 @@
-name: Build and package release
-
 on:
   push:
     tags:
@@ -15,12 +13,12 @@ jobs:
         with:
           python-version: '3.9'
       - name: Install dependencies
-        working-directory: ./cart-service
+        working-directory: ./grpc-microservices/cart-service
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Create cart-service package
-        working-directory: ./cart-service
+        working-directory: ./grpc-microservices/cart-service
         run: |
           mkdir -p ../dist
           tar -czvf ../dist/cart-service-${{ github.ref_name }}.tar.gz .
@@ -41,13 +39,13 @@ jobs:
           java-version: '21'
           cache: maven
       - name: Build with Maven
-        working-directory: ./product-service
+        working-directory: ./grpc-microservices/product-service
         run: mvn clean compile assembly:single
       - name: Upload product-service artifact
         uses: actions/upload-artifact@v3
         with:
           name: product-service
-          path: product-service/target/product-service-*.jar
+          path: grpc-microservices/product-service/target/product-service-*.jar
 
   build-web-server:
     runs-on: ubuntu-latest
@@ -58,11 +56,11 @@ jobs:
         with:
           node-version: '16'
       - name: Install dependencies
-        working-directory: ./web-server
+        working-directory: ./grpc-microservices/web-server
         run: |
           npm install
       - name: Package web-server
-        working-directory: ./web-server
+        working-directory: ./grpc-microservices/web-server
         run: |
           mkdir -p ../dist
           tar -czvf ../dist/web-server-${{ github.ref_name }}.tar.gz .
@@ -85,9 +83,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            cart-service/cart-service-${{ github.ref_name }}.tar.gz
-            product-service/product-service-*.jar
-            web-server/web-server-${{ github.ref_name }}.tar.gz
+            grpc-microservices/cart-service/cart-service-${{ github.ref_name }}.tar.gz
+            grpc-microservices/product-service/product-service-*.jar
+            grpc-microservices/web-server/web-server-${{ github.ref_name }}.tar.gz
           generate_release_notes: true
           draft: false
           prerelease: false
