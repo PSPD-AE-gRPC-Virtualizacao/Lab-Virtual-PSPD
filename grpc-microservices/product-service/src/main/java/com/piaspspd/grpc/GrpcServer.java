@@ -21,7 +21,7 @@ public class GrpcServer {
                 .addService(new ProductServiceImpl())
                 .build();
 
-        System.out.println("Grpc server awaiting on port: 50051");
+        System.out.println("Grpc server awaiting on port: " + port);
         server.start();
         server.awaitTermination();
     }
