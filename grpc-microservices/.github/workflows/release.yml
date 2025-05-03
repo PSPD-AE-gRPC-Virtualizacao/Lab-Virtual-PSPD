@@ -1,0 +1,93 @@
+name: Build and package release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-cart-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: cart-service
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        working-directory: ./cart-service
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Create cart-service package
+        working-directory: ./cart-service
+        run: |
+          mkdir -p ../dist
+          tar -czvf ../dist/cart-service-${{ github.ref_name }}.tar.gz .
+      - name: Upload cart-service artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: cart-service
+          path: dist/cart-service-${{ github.ref_name }}.tar.gz
+
+  build-product-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - name: Build with Maven
+        working-directory: ./product-service
+        run: mvn clean compile assembly:single
+      - name: Upload product-service artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: product-service
+          path: product-service/target/product-service-*.jar
+
+  build-web-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        working-directory: ./web-server
+        run: |
+          npm install
+      - name: Package web-server
+        working-directory: ./web-server
+        run: |
+          mkdir -p ../dist
+          tar -czvf ../dist/web-server-${{ github.ref_name }}.tar.gz .
+      - name: Upload web-server artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: web-server
+          path: dist/web-server-${{ github.ref_name }}.tar.gz
+
+  create-release:
+    needs: [build-cart-service, build-product-service, build-web-server]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      - name: List files
+        run: ls -R
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            cart-service/cart-service-${{ github.ref_name }}.tar.gz
+            product-service/product-service-*.jar
+            web-server/web-server-${{ github.ref_name }}.tar.gz
+          generate_release_notes: true
+          draft: false
+          prerelease: false
