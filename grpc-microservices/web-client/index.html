@@ -1,41 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>PSPD - Estudo</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PSPD - AE1</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <div id="carrinho">
-        <h1>Carrinho</h1>
+  <div class="wrapper">
+    <div class="container">
+      <h1>Gerenciar Produtos</h1>
+      <form id="product-form">
+        <input type="text" id="name" placeholder="Nome do Produto" required />
+        <input type="number" step="0.01" id="price" placeholder="Preço" required />
+        <input type="number" id="quantidade" placeholder="Quantidade" required />
+        <button type="submit" id = "add-product">Adicionar Produto</button>
+      </form>
+      <center>
+        <div style="margin-top: 10px; display: flex; width: 100%;">
+          <button id="remove-product" style="flex: 1; margin: 0 2px; background-color: #f67a7a; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Remover Produto
+          </button>
 
-        <div class="form-group">
-            <label>Cliente ID:</label>
-            <input type="text" id="userId" placeholder="Digite o ID do Cliente">
+          <button id="find-product" style="flex: 1; margin: 0 5px; background-color: #35dcc3; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Procurar Produto
+          </button>
+
+          <button id="edit-product" style="flex: 1; margin: 0 5px; background-color: #e8c657; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Editar Produto
+          </button>
         </div>
-
-        <div class="form-group">
-            <label>Nome do Produto:</label>
-            <input type="text" id="productName" placeholder="Digite o Nome do Produto">
-        </div>
-
-        <div class="form-group">
-            <label>Quantidade:</label>
-            <input type="number" id="quantity" value="1" min="1">
-        </div>
-
-        <div class="buttons">
-            <button id="addBtn">Adicionar ao Carrinho</button>
-            <button id="removeBtn">Remover do Carrinho</button>
-            <button id="viewBtn">Ver Carrinho</button>
-            <button id="clearBtn">Limpar Carrinho</button>
-        </div>
-
-        <h2>Carrinho</h2>
-        <pre id="cartOutput">Sem itens ainda.</pre>
+      </center>
+      <br>
+      <h2>Lista de Produtos</h2>
+      <ul id="product-list"></ul>
     </div>
 
-    <script src="main.js"></script>
+    <div class="container">
+      <h1>Gerenciar Carrinho</h1>
+      <form id="cart-form">
+        <input type="text" id="cart-name" placeholder="Nome do Produto" required />
+        <input type="number" id="cart-client-id" placeholder="Cliente ID" required />
+        <input type="number" id="cart-quantidade" placeholder="Quantidade" required />
+        <button type="submit">Adicionar ao Carrinho</button>
+      </form>
+      <center>
+        <div style="margin-top: 10px; display: flex; width: 100%;">
+          <button id="clear-cart-btn" style="flex: 1; margin: 0 2px; background-color: #f67a7a; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Limpar Carrinho
+          </button>
+
+          <button id="cart-viewBtn" style="flex: 1; margin: 0 5px; background-color: #35dcc3; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Ver Carrinho
+          </button>
+
+          <button id="cart-remove-product" style="flex: 1; margin: 0 5px; background-color: #e8c657; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Remover do Carrinho
+          </button>
+        </div>
+      </center>
+      <br>
+      <h2>Itens no Carrinho</h2>
+      <ul id="cart-list"></ul>
+    </div>
+  </div>
+  <script src="main.js"></script>
 </body>
 </html>
