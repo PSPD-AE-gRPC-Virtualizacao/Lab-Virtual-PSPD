@@ -1,34 +1,44 @@
 import grpc
+import argparse
 from concurrent import futures
 from collections import defaultdict
-
 import cart_pb2
 import cart_pb2_grpc
 import product_pb2
 import product_pb2_grpc
 from google.protobuf.empty_pb2 import Empty
+import sys
+
+parser = argparse.ArgumentParser(description='Cart Service')
+parser.add_argument('--port', type=int, default=50052, help='Port to listen on')
+parser.add_argument('--host', type=str, default='[::]', help='Host IP to bind to')
+parser.add_argument('--product-service', type=str, default='localhost:50051', 
+                    help='Product service address (host:port)')
+args = parser.parse_args()
+
+port = args.port
+if port < 0 or port > 65535:
+    print(f'Invalid port: {port}', file=sys.stderr)
+    sys.exit(1)
 
 # Estrutura para armazenar os carrinhos por usuário
 carts = defaultdict(list)
 
 # Conecta ao serviço de produtos
-channel = grpc.insecure_channel('localhost:50051')  # Porta do ProductService
+channel = grpc.insecure_channel(args.product_service)  # Endereço do ProductService
 product_stub = product_pb2_grpc.ProductServiceStub(channel)
-
 
 class CartService(cart_pb2_grpc.CartServiceServicer):
     def AddToCart(self, request, context):
         try:
             # Verifica se produto existe
             product = product_stub.GetProduct(product_pb2.nameQuery(name=request.product_name))
-
             # Verifica se já existe no carrinho
             cart_items = carts[request.user_id]
             for item in cart_items:
                 if item.product_name == request.product_name:
                     item.quantity += request.quantity
                     return Empty()
-
             # Adiciona novo item
             carts[request.user_id].append(cart_pb2.CartItem(
                 product_name=product.name,
@@ -59,15 +69,15 @@ class CartService(cart_pb2_grpc.CartServiceServicer):
         print(f"Limpando carrinho do id: {request.user_id}")
         return Empty()
 
-
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     cart_pb2_grpc.add_CartServiceServicer_to_server(CartService(), server)
-    server.add_insecure_port('[::]:50052')
-    print("CartService rodando na porta 50052")
+    server_address = f'{args.host}:{port}'
+    server.add_insecure_port(server_address)
+    print(f"CartService rodando em {server_address}")
+    print(f"Conectado ao ProductService em {args.product_service}")
     server.start()
     server.wait_for_termination()
-
 
 if __name__ == '__main__':
     serve()
