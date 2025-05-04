@@ -72,8 +72,25 @@ jobs:
           name: web-server
           path: dist/web-server-${{ github.ref_name }}.tar.gz
 
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create frontend package
+        run: |
+          mkdir -p dist
+          tar -czvf dist/web-client-${{ github.ref_name }}.tar.gz -C grpc-microservices/web-client .
+
+      - name: Upload web-client artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-client
+          path: dist/web-client-${{ github.ref_name }}.tar.gz
+
   create-release:
-    needs: [build-cart-service, build-product-service, build-web-server]
+    needs: [build-frontend, build-cart-service, build-product-service, build-web-server]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -88,6 +105,7 @@ jobs:
             cart-service/cart-service-${{ github.ref_name }}.tar.gz
             product-service/product-service-*.jar
             web-server/web-server-${{ github.ref_name }}.tar.gz
+            web-server/web-client-${{ github.ref_name }}.tar.gz
           generate_release_notes: true
           draft: false
           prerelease: false
