@@ -105,7 +105,7 @@ jobs:
             cart-service/cart-service-${{ github.ref_name }}.tar.gz
             product-service/product-service-*.jar
             web-server/web-server-${{ github.ref_name }}.tar.gz
-            web-server/web-client-${{ github.ref_name }}.tar.gz
+            web-client/web-client-${{ github.ref_name }}.tar.gz
           generate_release_notes: true
           draft: false
           prerelease: false
