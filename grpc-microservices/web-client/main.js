@@ -125,7 +125,6 @@ const updateProductList = (json) => {
         }
     });
 };
-
 updateProductList({});
 
 document.getElementById("find-product").addEventListener("click", async () => {
